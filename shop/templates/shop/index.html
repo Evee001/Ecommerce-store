@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_macros.html" import art %}
+{% block content %}
+<section class="hero">
+  <h1>Goods for people who think&nbsp;too&nbsp;much.</h1>
+  <p>Mugs, prints and small objects for overthinkers, procrastinators and anyone who has ever stared at the ceiling at 2am.</p>
+</section>
+
+<section class="grid" aria-label="Products">
+  {% for product in products %}
+    <article class="card">
+      <a href="{{ url_for('store.product', slug=product.slug) }}" class="card-link">
+        {{ art(product) }}
+        <div class="card-body">
+          <h2>{{ product.name }}</h2>
+          <p class="muted">{{ product.tagline }}</p>
+        </div>
+      </a>
+      <div class="card-foot">
+        <span class="price">{{ product.price_cents | money }}</span>
+        <form action="{{ url_for('store.add_to_cart', product_id=product.id) }}" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="quantity" value="1">
+          <input type="hidden" name="return_to" value="shop">
+          <button type="submit" class="button small">Add to cart</button>
+        </form>
+      </div>
+    </article>
+  {% else %}
+    <p>No products yet. Run <code>flask --app run seed</code> to add some.</p>
+  {% endfor %}
+</section>
+{% endblock %}

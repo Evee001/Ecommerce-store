@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "_macros.html" import art, qty_select with context %}
+{% block title %}Your cart · Tiny Thoughts Co.{% endblock %}
+{% block content %}
+<h1>Your cart</h1>
+
+{% if lines %}
+  <ul class="cart">
+    {% for line in lines %}
+      <li class="cart-line">
+        {{ art(line.product, "thumb") }}
+        <div class="cart-name">
+          <a href="{{ url_for('store.product', slug=line.product.slug) }}">{{ line.product.name }}</a>
+          <span class="muted">{{ line.product.price_cents | money }} each</span>
+        </div>
+        <form action="{{ url_for('store.update_cart', product_id=line.product.id) }}" method="post" class="cart-qty">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          {{ qty_select(selected=line.quantity, label="Quantity for " ~ line.product.name) }}
+          <button type="submit" class="button ghost small">Update</button>
+        </form>
+        <span class="price">{{ line.subtotal_cents | money }}</span>
+        <form action="{{ url_for('store.remove_from_cart', product_id=line.product.id) }}" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="link-button danger" aria-label="Remove {{ line.product.name }}">Remove</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <div class="summary">
+    <div class="total"><span>Total</span><strong>{{ total | money }}</strong></div>
+    <p class="muted">Shipping address is collected on the next step.</p>
+    {% if current_user.is_authenticated %}
+      <form action="{{ url_for('checkout.create_checkout_session') }}" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="button wide">Check out securely</button>
+      </form>
+    {% else %}
+      <a class="button wide" href="{{ url_for('auth.login', next=url_for('store.cart')) }}">Log in to check out</a>
+      <p class="muted center">New here? <a href="{{ url_for('auth.register', next=url_for('store.cart')) }}">Create an account</a></p>
+    {% endif %}
+  </div>
+{% else %}
+  <div class="empty">
+    <p>Your cart is empty. Plenty of time to think about it.</p>
+    <a class="button" href="{{ url_for('store.index') }}">Browse the shop</a>
+  </div>
+{% endif %}
+{% endblock %}

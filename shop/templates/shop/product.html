@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_macros.html" import art, qty_select with context %}
+{% block title %}{{ product.name }} · Tiny Thoughts Co.{% endblock %}
+{% block content %}
+<a class="back" href="{{ url_for('store.index') }}">&larr; Back to the shop</a>
+<article class="product">
+  {{ art(product, "large") }}
+  <div class="product-info">
+    <h1>{{ product.name }}</h1>
+    <p class="lede">{{ product.tagline }}</p>
+    <p class="price big">{{ product.price_cents | money }}</p>
+    <p>{{ product.description }}</p>
+    <form action="{{ url_for('store.add_to_cart', product_id=product.id) }}" method="post" class="buy">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {{ qty_select() }}
+      <button type="submit" class="button">Add to cart</button>
+    </form>
+  </div>
+</article>
+{% endblock %}

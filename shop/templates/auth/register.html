@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}Sign up · Tiny Thoughts Co.{% endblock %}
+{% block content %}
+<section class="auth">
+  <h1>Create your account</h1>
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.name, "name") }}
+    {{ field(form.email, "email") }}
+    {{ field(form.password, "new-password") }}
+    {{ field(form.confirm, "new-password") }}
+    <button type="submit" class="button wide">Sign up</button>
+  </form>
+  <p class="muted center">Already have an account? <a href="{{ url_for('auth.login', next=request.args.get('next')) }}">Log in</a></p>
+</section>
+{% endblock %}

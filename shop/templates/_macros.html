@@ -1,0 +1,24 @@
+{% macro art(product, size="") -%}
+  <div class="art {{ size }}" style="--tile: {{ product.color }}" aria-hidden="true">
+    <span>{{ product.glyph }}</span>
+  </div>
+{%- endmacro %}
+
+{% macro field(f, autocomplete=None) -%}
+  <label class="field">
+    <span>{{ f.label.text }}</span>
+    {{ f(autocomplete=autocomplete, class="input" ~ (" invalid" if f.errors else "")) }}
+    {% for error in f.errors %}<small class="error">{{ error }}</small>{% endfor %}
+  </label>
+{%- endmacro %}
+
+{% macro qty_select(name="quantity", selected=1, label="Quantity") -%}
+  <label class="qty">
+    <span class="sr-only">{{ label }}</span>
+    <select name="{{ name }}" class="input">
+      {% for n in range(1, max_qty_per_item + 1) %}
+        <option value="{{ n }}" {% if n == selected %}selected{% endif %}>{{ n }}</option>
+      {% endfor %}
+    </select>
+  </label>
+{%- endmacro %}

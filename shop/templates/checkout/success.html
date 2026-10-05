@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }} · Tiny Thoughts Co.{% endblock %}
+{% block content %}
+<section class="receipt">
+  {% if order.status == "paid" %}
+    <h1>Thank you, {{ current_user.name }}!</h1>
+    <p class="lede">Your payment went through and order #{{ order.id }} is confirmed. A receipt is on its way to {{ current_user.email }}.</p>
+  {% else %}
+    <h1>Almost there…</h1>
+    <p class="lede">We're waiting for Stripe to confirm your payment for order #{{ order.id }}. Refresh this page in a few seconds.</p>
+  {% endif %}
+
+  <table class="table">
+    <thead><tr><th>Item</th><th>Qty</th><th class="num">Subtotal</th></tr></thead>
+    <tbody>
+      {% for item in order.items %}
+        <tr><td>{{ item.name }}</td><td>{{ item.quantity }}</td><td class="num">{{ item.subtotal_cents | money(order.currency) }}</td></tr>
+      {% endfor %}
+    </tbody>
+    <tfoot><tr><th colspan="2">Total</th><th class="num">{{ order.total_cents | money(order.currency) }}</th></tr></tfoot>
+  </table>
+  <a class="button" href="{{ url_for('store.index') }}">Keep browsing</a>
+  <a class="button ghost" href="{{ url_for('checkout.orders') }}">View all orders</a>
+</section>
+{% endblock %}

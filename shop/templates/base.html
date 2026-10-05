@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Tiny Thoughts Co.{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="logo" href="{{ url_for('store.index') }}">Tiny Thoughts <span>Co.</span></a>
+      <nav class="nav">
+        <a href="{{ url_for('store.index') }}">Shop</a>
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('checkout.orders') }}">Orders</a>
+          <form action="{{ url_for('auth.logout') }}" method="post" class="inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="link-button">Log out</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">Log in</a>
+          <a href="{{ url_for('auth.register') }}">Sign up</a>
+        {% endif %}
+        <a class="cart-link" href="{{ url_for('store.cart') }}">
+          Cart <span class="badge" aria-label="{{ cart_count }} items">{{ cart_count }}</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flashes" role="status">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Tiny Thoughts Co. &middot; Goods for people who think too much. &middot; Payments secured by Stripe.</p>
+    </div>
+  </footer>
+</body>
+</html>

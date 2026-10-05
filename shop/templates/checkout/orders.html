@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Your orders · Tiny Thoughts Co.{% endblock %}
+{% block content %}
+<h1>Your orders</h1>
+{% if orders %}
+  <table class="table">
+    <thead><tr><th>Order</th><th>Date</th><th>Items</th><th>Status</th><th class="num">Total</th></tr></thead>
+    <tbody>
+      {% for order in orders %}
+        <tr>
+          <td>#{{ order.id }}</td>
+          <td>{{ order.created_at.strftime("%d %b %Y") }}</td>
+          <td>{{ order.items | map(attribute="name") | join(", ") }}</td>
+          <td><span class="status status-{{ order.status }}">{{ order.status }}</span></td>
+          <td class="num">{{ order.total_cents | money(order.currency) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="empty">
+    <p>No orders yet.</p>
+    <a class="button" href="{{ url_for('store.index') }}">Start shopping</a>
+  </div>
+{% endif %}
+{% endblock %}
